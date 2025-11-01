@@ -12,7 +12,7 @@ import User from "../model/user.model";
 export const sendConnectionRequest = async (req, res, next) => {
     try {
         const toUserid = req.params.toUserid;   
-        const fromUserid = req.user.id;
+        const fromUserid = req.user._id;
         const Cstatus=req.params.status;
         console.log("toUserid,fromUserid",toUserid,fromUserid);
         const allowedStatuses = ['ignore', 'connect'];
@@ -60,7 +60,7 @@ export const reviewConnectionRequest = async (req, res, next) => {
         }
         const connectionRequest = await ConnectionRequest.findOne({
             _id: requestId,
-            toUserid: req.user.id,
+            toUserid: req.user._id,
             status: 'connect'
         });
         if (!connectionRequest) {

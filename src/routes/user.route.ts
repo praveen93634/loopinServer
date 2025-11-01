@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { basicAuth } from "../middleware/auth";
-import { getAllUsers, getpendingRequests, getUserById, updateUserProfile } from "../controller/user.controller";
+import { getAllUsers, getConnections, getpendingRequests, getUserById, updateUserProfile } from "../controller/user.controller";
 const router: Router = Router();
 
 router.put("/getAllUsers",
@@ -15,8 +15,12 @@ router.put("/update",
     basicAuth,
     updateUserProfile
 )
-router.get("/getSingleUser/:userid",
+router.get("/profile",
     basicAuth,
     getUserById
+)
+router.get("/myconnections",
+    basicAuth,
+    getConnections
 )
 export default router;

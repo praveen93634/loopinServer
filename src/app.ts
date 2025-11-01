@@ -7,10 +7,9 @@ import connectDB from './config/database';
 
 import admin from 'firebase-admin';
 import route from './routes';
+import { initializeSocket } from './utils/socket';
 const app = express();
-
-
-
+const http=require("http")
 
 // Middleware
 app.use(express.json());
@@ -21,16 +20,18 @@ app.get('/', (req, res) => {
 });
 app.use(cors({
     origin:process.env.FrontEnd_BaseUrl,
-    Credential:true
+    credentials:true
 }))
 app.use('/', route);
 
 const PORT = process.env.PORT || 3000;
 
+const server=http.createServer(app);
+initializeSocket(server)
 connectDB()
     .then(() => {
         console.log("✅ Connected to DB");
-        app.listen(process.env.PORT, () => {
+        server.listen(process.env.PORT, () => {
             console.log("🚀 Server started");
         });
     })

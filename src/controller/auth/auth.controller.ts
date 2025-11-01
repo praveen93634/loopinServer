@@ -24,7 +24,7 @@ export const signup = async (req, res, next) => {
         const user = new User(data);
         user.password = passwordhash;
         const insertUser = await user.save();
-        response(req, res, insertUser, 201, "User created successfully");
+        response(req, res, "", 201, "User registered successfully");
     } catch (err) {
         response(req, res, err, 500, err.message);
     }
@@ -44,7 +44,15 @@ export const login = async (req, res, next) => {
         const compare = await bcrypt.compare(password, data.password)
         if (compare) {
             const gentoken = await jwt.sign({ _id: data._id}, process.env.JWT_SECRET, { expiresIn: "1d" })
-            response(req, res, { token: gentoken,user:data }, 200, "User login Sucessfully")
+            const safedata = {
+                _id: data._id,
+                name: data.name,
+                email: data.email,
+                Avatar: data.Avatar,
+                location: data.location,
+                bio: data.bio
+            }
+            response(req, res, { token: gentoken, user: safedata }, 200, "User login Sucessfully")
         }
         else {
             response(req, res, "login User", 500, errorMessage.invalid)

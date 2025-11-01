@@ -2,10 +2,7 @@ import { error } from 'console';
 import { response } from '../../helper/commenrespons';
 const bcrypt = require('bcrypt')
 import { errorMessage } from '../../helper/errorMessage';
-import { hash } from 'crypto';
-import e from 'express';
-// const User = require('../../model/user.model')
-import User from '../../model/user.model';
+import User, { UserDocument } from '../../model/user.model';
 const jwt = require('jsonwebtoken')
 import admin from 'firebase-admin';
 const fireadmin = require('../../../firebaseauth');
@@ -20,9 +17,12 @@ require('dotenv').config()
     
 export const signup = async (req, res, next) => {
     try {
-        const { name, email, password } = req.body;
-        const passwordhash = await bcrypt.hash(password, 10);
-        const user = new User({ name, email, password: passwordhash });
+        console.log("req.body",req.body);
+        const data:UserDocument = req.body;
+        // console.log("name,email,password",name,email,password);
+        const passwordhash = await bcrypt.hash(data.password, 10);
+        const user = new User(data);
+        user.password = passwordhash;
         const insertUser = await user.save();
         response(req, res, insertUser, 201, "User created successfully");
     } catch (err) {

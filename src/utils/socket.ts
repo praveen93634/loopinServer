@@ -1,3 +1,8 @@
+import { error } from "console"
+import { response } from "../helper/commenrespons"
+import Chat from "../model/chat.model"
+import ConnectionRequest from "../model/connectionRequest.model"
+
 const socket = require("socket.io")
 const crypto=require("crypto")
 
@@ -16,9 +21,32 @@ export const initializeSocket = (server) => {
             socket.join(roomid)
             console.log()
         })
-        socket.on("sendMessege",({name,Userid, targetid,text})=>{
+        socket.on("sendMessege", async ({name,Userid, targetid,text})=>{
            const roomid=getSecretRoomId(Userid,targetid)
-           io.to(roomid).emit("messeageReceived",{name,text})
+           try{
+            let chat=await Chat.findOne({participents:{$all:[Userid,targetid]}}) 
+            const connection=await ConnectionRequest.findOne({$or:[{fromuserid:Userid,toUserid:targetid,status:"accepted"},
+                {fromuserid:targetid,toUserid:Userid,status:"accepted"}
+            ]})
+            if(!connection){
+                throw new error("unAuthorized Access!")
+            }
+            if(!chat){
+                chat=new Chat({
+                    participents:[Userid,targetid],
+                    messages:[]
+                })
+            }
+            chat.messages.push({
+                Userid:Userid,
+                text
+            })
+            await chat.save()
+           }
+           catch(err){
+            console.log(err)
+           }
+           io.to(roomid).emit("messeageReceived",{name,text,Userid,targetid})
         })
         socket.on("disconnect",()=>{
             

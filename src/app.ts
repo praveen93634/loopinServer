@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
     res.send('Welcome to the server!');
 });
 app.use(cors({
-    origin:process.env.FrontEnd_BaseUrl,
+    origin:process.env.FrontEnd_BaseUrl  || process.env.FrontEnd_PRODBaseUrl,
     credentials:true
 }))
 app.use('/', route);

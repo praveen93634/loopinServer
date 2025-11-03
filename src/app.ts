@@ -18,8 +18,9 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send('Welcome to the server!');
 });
+const allowedOrigin = process.env.FrontEnd_BaseUrl || process.env.FrontEnd_PRODBaseUrl
 app.use(cors({
-    origin:process.env.FrontEnd_BaseUrl  || process.env.FrontEnd_PRODBaseUrl,
+    origin:allowedOrigin,
     credentials:true
 }))
 app.use('/', route);

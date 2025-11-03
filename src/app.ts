@@ -18,11 +18,28 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send('Welcome to the server!');
 });
-const allowedOrigin = process.env.FrontEnd_BaseUrl || process.env.FrontEnd_PRODBaseUrl
-app.use(cors({
-    origin:allowedOrigin,
-    credentials:true
-}))
+// ✅ 1. Define allowed origins
+const allowedOrigins = [
+  process.env.FrontEnd_BaseUrl,
+  process.env.FrontEnd_PRODBaseUrl,
+  "http://localhost:4200", // optional for local Angular dev
+].filter(Boolean); // remove undefined values
+
+// ✅ 2. Use CORS before routes
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests without an origin (like mobile apps or curl)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log(`❌ Blocked by CORS: ${origin}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use('/', route);
 
 const PORT = process.env.PORT || 3000;

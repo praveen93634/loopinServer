@@ -11,6 +11,7 @@ const getSecretRoomId=(Userid,targetid)=>{
 }
 export const initializeSocket = (server) => {
     const io = socket(server, {
+        path: "/api/socket.io/",
         cors: {
             origin: process.env.FrontEnd_BaseUrl
         }

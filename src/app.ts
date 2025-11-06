@@ -41,7 +41,7 @@ app.use(
     credentials: true,
   })
 );
-app.use('/', route);
+app.use('/api', route);
 
 const PORT = process.env.PORT || 3000;
 

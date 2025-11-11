@@ -11,7 +11,7 @@ import User, { UserDocument } from "../model/user.model";
  */
 export const getAllUsers = async (req, res, next) => {
     try {
-        const connnectionrequest = await ConnectionRequest.find({ $or: [{ fromuserid: req.user.id }, { toUserid: req.user.id }] }).select("fromuserid toUserid");
+        const connnectionrequest = await ConnectionRequest.find({ $or: [{ fromuserid: req.user._id }, { toUserid: req.user._id }] }).select("fromuserid toUserid");
         const excludedUserIds = new Set<string>();
         connnectionrequest.forEach((request) => {
             excludedUserIds.add(request.fromuserid.toString());
